@@ -1,18 +1,10 @@
 #!/usr/bin/env bash
 set -e
 
-echo "🧠 Starting virtual display..."
-export DISPLAY=:1
-Xvfb :1 -screen 0 1024x768x24 &
+echo "🚀 Starting Ubuntu GUI + Flask..."
+# Chạy noVNC có sẵn từ base image
+/etc/init.d/xvfb start || true
+/etc/init.d/novnc start || true
 
-echo "🪟 Starting desktop environment..."
-startxfce4 &
-
-echo "🔐 Starting x11vnc..."
-x11vnc -forever -usepw -shared -rfbport 5900 -display :1 &
-
-echo "🌐 Starting noVNC..."
-websockify --web=/usr/share/novnc/ 6900 localhost:5900 &
-
-echo "🚀 Starting Flask web..."
+# Chạy Flask
 python3 main.py
